@@ -2,13 +2,14 @@ import pandas as pd
 import pathlib
 import os
 from loguru import logger
+import re
 
 
 def get_raw_files(project_dir: pathlib.Path):
     dossier = project_dir / "data/raw"
 
     liste_fichiers = []
-    for dossier_actuel, sous_dossiers, fichiers in os.walk(dossier):
+    for dossier_actuel, _, fichiers in os.walk(dossier):
         for fichier in fichiers:
             chemin_complet = os.path.join(dossier_actuel, fichier)
             chemin_relatif = os.path.relpath(chemin_complet, project_dir)
@@ -17,7 +18,7 @@ def get_raw_files(project_dir: pathlib.Path):
     return liste_fichiers
 
 
-def load_data(project_dir: pathlib.Path, data_path: str):
+def process_raw_data(project_dir: pathlib.Path, data_path: str):
     logger.info(f"Processing {data_path}")
     df = pd.read_csv(project_dir / data_path)
 
@@ -25,21 +26,38 @@ def load_data(project_dir: pathlib.Path, data_path: str):
         colonne for colonne in df.columns if not any(char.isdigit() for char in colonne)
     ]
 
+    annee_pattern = re.compile(r"(\d+)")
+
+    metric_cols = []
+    for col in df.columns:
+        if not col in id_cols:
+            if int(annee_pattern.findall(col)[0]) in [
+                2022,
+                2017,
+                2012,
+                2007,
+                2002,
+                1995,
+                1988,
+                1981,
+                1974,
+            ]:
+                metric_cols.append(col)
+
+    df = df[id_cols + metric_cols]
     df_long = pd.melt(df, id_vars=id_cols, var_name="type_annee", value_name="valeur")
 
     df_long["annee"] = df_long["type_annee"].str.extract(r"(\d+)").astype(int)
     df_long["type"] = df_long["type_annee"].str.extract(r"([a-zA-Z]+)")[0]
     df_long.drop(columns=["type_annee"], inplace=True)
 
-    df_long = df_long[id_cols + ["type", "annee"]]
     df_pivot = (
         df_long.pivot(index=id_cols + ["annee"], columns="type", values="valeur")
         .reset_index()
-        .drop(columns=["type"])
         .sort_values(by=id_cols + ["annee"])
     )
 
-    df_long.to_csv(project_dir / "data/interim/" / f"{data_path.name}", index=False)
+    df_pivot.to_csv(project_dir / "data/interim" / f"{data_path.name}", index=False)
 
 
 if __name__ == "__main__":
@@ -48,4 +66,4 @@ if __name__ == "__main__":
     files = get_raw_files(project_dir=project_dir)
 
     for file in files:
-        load_data(project_dir, data_path=file)
+        process_raw_data(project_dir, data_path=file)
