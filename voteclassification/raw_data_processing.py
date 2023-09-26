@@ -2,6 +2,7 @@ import pandas as pd
 import pathlib
 import os
 from loguru import logger
+from omegaconf import OmegaConf
 import re
 
 
@@ -20,6 +21,8 @@ def get_raw_files(project_dir: pathlib.Path):
 
 def process_raw_data(project_dir: pathlib.Path, data_path: str):
     logger.info(f"Processing {data_path}")
+
+    cfg = OmegaConf.load(project_dir / "settings/global.yaml")
     df = pd.read_csv(project_dir / data_path)
 
     id_cols = [
@@ -31,17 +34,7 @@ def process_raw_data(project_dir: pathlib.Path, data_path: str):
     metric_cols = []
     for col in df.columns:
         if not col in id_cols:
-            if int(annee_pattern.findall(col)[0]) in [
-                2022,
-                2017,
-                2012,
-                2007,
-                2002,
-                1995,
-                1988,
-                1981,
-                1974,
-            ]:
+            if int(annee_pattern.findall(col)[0]) in cfg.election_years:
                 metric_cols.append(col)
 
     df = df[id_cols + metric_cols]
@@ -49,6 +42,11 @@ def process_raw_data(project_dir: pathlib.Path, data_path: str):
 
     df_long["annee"] = df_long["type_annee"].str.extract(r"(\d+)").astype(int)
     df_long["type"] = df_long["type_annee"].str.extract(r"([a-zA-Z]+)")[0]
+
+    if "dep" in str(data_path):
+        df_long["type"] = df_long["type"] + "_dep"
+    else:
+        df_long["type"] = df_long["type"]
     df_long.drop(columns=["type_annee"], inplace=True)
 
     df_pivot = (
@@ -56,6 +54,12 @@ def process_raw_data(project_dir: pathlib.Path, data_path: str):
         .reset_index()
         .sort_values(by=id_cols + ["annee"])
     )
+
+    if "paris" in df_pivot.columns:
+        df_pivot.drop(columns=["paris"], inplace=True)
+    if "pop" not in str(data_path):
+        columns_to_drop = [col for col in df_pivot.columns if "pop" in col]
+        df_pivot.drop(columns=columns_to_drop, inplace=True)
 
     df_pivot.to_csv(project_dir / "data/interim" / f"{data_path.name}", index=False)
 

@@ -9,3 +9,42 @@ election_years:
 - 1981 
 - 1974
 
+features:
+- pop #population commune
+- popagglo #population agglomeration
+- pop_dep #population departement
+- popcoma_dep #population moyenne des communes du département
+- electeurs #population disposant du droit de vote
+- vbbm #indicateur 1-2-3-4: villages, bourgs, banlieues, métropoles
+- vbbmpauvresriches # par revenus
+- vbbmpauvresrichescap # par capital
+- age #age moyen commune
+- palpha_dep #proportion de la population 20+ alphabétisée
+- pbac_dep #proportion bachelier departemnet
+- psup_dep #proportion diplomées du supérieur departement
+- palpha #proportion de la population 20+ alphabétisée commune
+- pbac #proportion bac commune
+- psup #proportion superieur commune
+- pagri #proportion agriculteur
+- pindp #proportion independant
+- pcadr #proportion cadre
+- ppint #proportion emploi intermediaire
+- pouvr #proportion ouvrier
+- pempl #proportion employé
+- pchom #proportion chomage
+- petranger_dep #proportion etranger departement
+- petranger #proportion etranger commune
+- pibhab_dep #pib habitant departement
+- pib_dep #pib departement
+- revmoy_dep # revenu moyen par hab departement
+- revmoyadu_dep #revenu moyen par adulte departement
+- revmoyadu #revenu moyen par adulte commune
+- pibtot #pib commune en % du pib national
+- prixm2ratio_dep #prix m2 ratio moyenne nationale
+- prixbien_dep #prix en euros 
+- capitalimmo_dep #capital immobilier total en fraction du total national
+- capitalratio_dep #capital immobilier (valeur des logements) par habitant en ratio de la moyenne nationale
+- capitalratio
+- capitalimmo 
+- prixbien
+- ppropri #proportion proprietaire logement
