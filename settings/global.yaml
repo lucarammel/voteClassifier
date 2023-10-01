@@ -19,10 +19,9 @@ features:
 - vbbmpauvresriches # par revenus
 - vbbmpauvresrichescap # par capital
 - age #age moyen commune
-- palpha_dep #proportion de la population 20+ alphabétisée
+- age_dep
 - pbac_dep #proportion bachelier departemnet
 - psup_dep #proportion diplomées du supérieur departement
-- palpha #proportion de la population 20+ alphabétisée commune
 - pbac #proportion bac commune
 - psup #proportion superieur commune
 - pagri #proportion agriculteur
@@ -40,7 +39,6 @@ features:
 - revmoyadu_dep #revenu moyen par adulte departement
 - revmoyadu #revenu moyen par adulte commune
 - pibtot #pib commune en % du pib national
-- prixm2ratio_dep #prix m2 ratio moyenne nationale
 - prixbien_dep #prix en euros 
 - capitalimmo_dep #capital immobilier total en fraction du total national
 - capitalratio_dep #capital immobilier (valeur des logements) par habitant en ratio de la moyenne nationale
